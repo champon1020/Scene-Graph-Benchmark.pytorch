@@ -14,7 +14,7 @@ dist/
 # checkpoint
 ASE/
 checkpoint/
-output/
+results/
 
 # dataset
 datasets/vg/
