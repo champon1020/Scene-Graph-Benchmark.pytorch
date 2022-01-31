@@ -77,13 +77,13 @@ class VGDataset(torch.utils.data.Dataset):
             if self.transforms is not None:
                 img, target = self.transforms(img, target)
             return img, target, index
-        
+
         img = Image.open(self.filenames[index]).convert("RGB")
         if img.size[0] != self.img_info[index]['width'] or img.size[1] != self.img_info[index]['height']:
             print('='*20, ' ERROR index ', str(index), ' ', str(img.size), ' ', str(self.img_info[index]['width']), ' ', str(self.img_info[index]['height']), ' ', '='*20)
 
         flip_img = (random.random() > 0.5) and self.flip_aug and (self.split == 'train')
-        
+
         target = self.get_groundtruth(index, flip_img)
 
         if flip_img:
@@ -154,7 +154,7 @@ class VGDataset(torch.utils.data.Dataset):
                 all_rel_sets[(o0, o1)].append(r)
             relation = [(k[0], k[1], np.random.choice(v)) for k,v in all_rel_sets.items()]
             relation = np.array(relation, dtype=np.int32)
-        
+
         # add relation to target
         num_box = len(target)
         relation_map = torch.zeros((num_box, num_box), dtype=torch.int64)
@@ -181,8 +181,8 @@ class VGDataset(torch.utils.data.Dataset):
 
 
 def get_VG_statistics(img_dir, roidb_file, dict_file, image_file, must_overlap=True):
-    train_data = VGDataset(split='train', img_dir=img_dir, roidb_file=roidb_file, 
-                        dict_file=dict_file, image_file=image_file, num_val_im=5000, 
+    train_data = VGDataset(split='train', img_dir=img_dir, roidb_file=roidb_file,
+                        dict_file=dict_file, image_file=image_file, num_val_im=5000,
                         filter_duplicate_rels=False)
     num_obj_classes = len(train_data.ind_to_classes)
     num_rel_classes = len(train_data.ind_to_predicates)
@@ -205,10 +205,10 @@ def get_VG_statistics(img_dir, roidb_file, dict_file, image_file, must_overlap=T
             bg_matrix[o1, o2] += 1
 
     return fg_matrix, bg_matrix
-    
+
 
 def box_filter(boxes, must_overlap=False):
-    """ Only include boxes that overlap as possible relations. 
+    """ Only include boxes that overlap as possible relations.
     If no overlapping boxes, use all of them."""
     n_cands = boxes.shape[0]
 
@@ -258,7 +258,7 @@ def correct_img_info(img_dir, image_file):
             print(img)
             data[i]['width'] = img_data.size[0]
             data[i]['height'] = img_data.size[1]
-    with open(image_file, 'w') as outfile:  
+    with open(image_file, 'w') as outfile:
         json.dump(data, outfile)
 
 def load_info(dict_file, add_bg=True):
@@ -288,7 +288,7 @@ def load_image_filenames(img_dir, image_file):
     Parameters:
         image_file: JSON file. Elements contain the param "image_id".
         img_dir: directory where the VisualGenome images are located
-    Return: 
+    Return:
         List of filenames corresponding to the good images
     """
     with open(image_file, 'r') as f:
@@ -298,7 +298,8 @@ def load_image_filenames(img_dir, image_file):
     fns = []
     img_info = []
     for i, img in enumerate(im_data):
-        basename = '{}.jpg'.format(img['image_id'])
+        # basename = '{}.jpg'.format(img['image_id'])
+        basename = '{}.png'.format(img['image_id'])
         if basename in corrupted_ims:
             continue
 
@@ -306,8 +307,11 @@ def load_image_filenames(img_dir, image_file):
         if os.path.exists(filename):
             fns.append(filename)
             img_info.append(img)
-    assert len(fns) == 108073
-    assert len(img_info) == 108073
+    # assert len(fns) == 108073
+    # assert len(img_info) == 108073
+    print("fns:", len(fns))
+    print("img_info:", len(img_info))
+    assert len(fns) == len(img_info)
     return fns, img_info
 
 
@@ -321,12 +325,12 @@ def load_graphs(roidb_file, split, num_im, num_val_im, filter_empty_rels, filter
         num_val_im: Number of validation images
         filter_empty_rels: (will be filtered otherwise.)
         filter_non_overlap: If training, filter images that dont overlap.
-    Return: 
+    Return:
         image_index: numpy array corresponding to the index of images we're using
-        boxes: List where each element is a [num_gt, 4] array of ground 
+        boxes: List where each element is a [num_gt, 4] array of ground
                     truth boxes (x1, y1, x2, y2)
         gt_classes: List where each element is a [num_gt] array of classes
-        relationships: List where each element is a [num_r, 3] array of 
+        relationships: List where each element is a [num_r, 3] array of
                     (box_ind_1, box_ind_2, predicate) relationships
     """
     roi_h5 = h5py.File(roidb_file, 'r')

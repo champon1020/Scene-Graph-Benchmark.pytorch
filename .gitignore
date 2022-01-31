@@ -12,10 +12,13 @@ dist/
 **/.ipynb_checkpoints/
 
 # checkpoint
+ASE/
 checkpoint/
+output/
 
 # dataset
 datasets/vg/
+datasets/ag/
 *.png
 *.jpg
 *.jpeg
@@ -34,4 +37,3 @@ datasets/vg/
 
 # MacOS
 .DS_Store
-
