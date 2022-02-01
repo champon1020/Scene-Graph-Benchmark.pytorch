@@ -57,6 +57,18 @@ img_to_first_rel, img_to_last_rel = [], []
 boxes, labels = [], []
 relationships, predicates = [], []
 split = []
+
+
+def xyxy_to_cxcywh(bbox):
+    # convert to xywh
+    bbox = [bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]]
+    return xywh_to_cxcywh(bbox)
+
+
+def xywh_to_cxcywh(bbox):
+    return [bbox[0] + bbox[2] / 2, bbox[1] + bbox[3] / 2, bbox[2], bbox[3]]
+
+
 for frame_id in tqdm(frame_list):
     persons = person_bbox[frame_id]
     object_and_relationships = object_bbox_and_relationship[frame_id]
@@ -67,7 +79,9 @@ for frame_id in tqdm(frame_list):
     img_to_first_box.append(bbox_count)
     img_to_first_rel.append(rel_count)
 
-    boxes.append(np.array(persons["bbox"][0], dtype=np.int32))
+    # convert to (cxcywh)
+    p_box = xyxy_to_cxcywh(persons["bbox"][0])
+    boxes.append(np.array(p_box, dtype=np.int32))
     labels.append(np.array([label_to_idx["person"]], dtype=np.int32))
     w, h = persons["bbox_size"]
     image_data.append({"width": w, "height": h, "image_id": frame_id[:-4]})
@@ -94,15 +108,8 @@ for frame_id in tqdm(frame_list):
         if len(all_predicates) == 0:
             continue
 
-        obj_box = np.array(
-            [
-                obj_and_rel["bbox"][0],
-                obj_and_rel["bbox"][1],
-                obj_and_rel["bbox"][2] + obj_and_rel["bbox"][0],
-                obj_and_rel["bbox"][3] + obj_and_rel["bbox"][1],
-            ],
-            dtype=np.int32,
-        )
+        obj_box = xywh_to_cxcywh(obj_and_rel["bbox"])
+        obj_box = np.array(obj_box, dtype=np.int32)
         obj_label = np.array(
             [label_to_idx[obj_and_rel["class"].replace("/", "")]], dtype=np.int32
         )
