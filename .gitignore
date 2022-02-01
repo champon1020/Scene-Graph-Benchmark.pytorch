@@ -19,6 +19,7 @@ results/
 # dataset
 datasets/vg/
 datasets/ag/
+datasets/hag/
 *.png
 *.jpg
 *.jpeg
