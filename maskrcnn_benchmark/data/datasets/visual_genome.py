@@ -132,7 +132,8 @@ class VGDataset(torch.utils.data.Dataset):
         img_info = self.get_img_info(index)
         w, h = img_info['width'], img_info['height']
         # important: recover original box from BOX_SCALE
-        box = self.gt_boxes[index] / BOX_SCALE * max(w, h)
+        # box = self.gt_boxes[index] / BOX_SCALE * max(w, h)
+        box = self.gt_boxes[index]
         box = torch.from_numpy(box).reshape(-1, 4)  # guard against no boxes
         if flip_img:
             new_xmin = w - box[:,2]
