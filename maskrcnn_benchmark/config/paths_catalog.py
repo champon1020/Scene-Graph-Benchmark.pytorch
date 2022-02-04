@@ -123,6 +123,12 @@ class DatasetCatalog(object):
             "dict_file": "ag/VG-SGG-dicts.json",
             "image_file": "ag/image_data.json",
         },
+        "VidVRD_stanford_filtered": {
+            "img_dir": "vidvrd/frames",
+            "roidb_file": "vidvrd/VG-SGG.h5",
+            "dict_file": "vidvrd/VG-SGG-dicts.json",
+            "image_file": "vidvrd/image_data.json",
+        },
     }
 
     @staticmethod
@@ -149,7 +155,7 @@ class DatasetCatalog(object):
                 factory="PascalVOCDataset",
                 args=args,
             )
-        elif ("VG" in name) or ('GQA' in name) or ("AG" in name):
+        elif ("VG" in name) or ('GQA' in name) or ("AG" in name) or ("VidVRD" in name):
             # name should be something like VG_stanford_filtered_train
             p = name.rfind("_")
             name, split = name[:p], name[p+1:]

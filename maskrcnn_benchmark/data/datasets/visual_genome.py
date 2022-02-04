@@ -300,7 +300,7 @@ def load_image_filenames(img_dir, image_file):
     img_info = []
     for i, img in enumerate(im_data):
         # basename = '{}.jpg'.format(img['image_id'])
-        basename = '{}.png'.format(img['image_id'])
+        basename = '{}.{}'.format(img['image_id'], img['ext'])
         if basename in corrupted_ims:
             continue
 

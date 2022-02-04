@@ -20,6 +20,7 @@ results/
 datasets/vg/
 datasets/ag/
 datasets/hag/
+datasets/vidvrd/
 *.png
 *.jpg
 *.jpeg

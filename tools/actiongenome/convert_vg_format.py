@@ -84,7 +84,7 @@ for frame_id in tqdm(frame_list):
     boxes.append(np.array(p_box, dtype=np.int32))
     labels.append(np.array([label_to_idx["person"]], dtype=np.int32))
     w, h = persons["bbox_size"]
-    image_data.append({"width": w, "height": h, "image_id": frame_id[:-4]})
+    image_data.append({"width": w, "height": h, "image_id": frame_id[:-4], "ext": "png"})
     person_box_id = bbox_count
     bbox_count += 1
 

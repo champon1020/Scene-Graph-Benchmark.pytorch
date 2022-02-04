@@ -13,6 +13,21 @@ pretrain_ag:
 				OUTPUT_DIR ./checkpoint/pretrained_faster_rcnn \
 				SOLVER.PRE_VAL False
 
+.PHONY: pretrain_vidvrd
+pretrain_vidvrd:
+	python -m torch.distributed.launch --master_port 10025 --nproc_per_node=1 tools/detector_pretrain_net.py \
+				--config-file "configs/vidvrd/e2e_relation_detector_X_101_32_8_FPN_1x.yaml" \
+				SOLVER.IMS_PER_BATCH 2 \
+				TEST.IMS_PER_BATCH 2 \
+				DTYPE "float16" \
+				SOLVER.MAX_ITER 50000 \
+				SOLVER.STEPS "(30000, 45000)" \
+				SOLVER.VAL_PERIOD 2000 \
+				SOLVER.CHECKPOINT_PERIOD 2000 \
+				MODEL.RELATION_ON False \
+				OUTPUT_DIR ./checkpoint/pretrained_faster_rcnn \
+				SOLVER.PRE_VAL False
+
 .PHONY: train_motif
 train_motif:
 	python -m torch.distributed.launch --master_port 10025 --nproc_per_node=4 tools/relation_train_net.py \
